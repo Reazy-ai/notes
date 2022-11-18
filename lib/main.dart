@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:mynotes/app_router.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as devtool show log;
@@ -10,11 +11,13 @@ import 'package:mynotes/views/verify_email_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  runApp(MyApp(appRouter: AppRouter(),));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key, required this.appRouter}) : super(key: key);
+
+  final AppRouter appRouter;
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +28,12 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.purple,
       ),
       home: const HomePage(),
-      routes: {
-        '/login': (context) => const LoginView(),
-        '/register': (context) => const RegisterView(),
-        '/notes':(context) => const NotesView(),
-      },
+      onGenerateRoute: appRouter.onGenerateRoute,
+      // routes: {
+      //   '/login': (context) => const LoginView(),
+      //   '/register': (context) => const RegisterView(),
+      //   '/notes':(context) => const NotesView(),
+      // },
     );
   }
 }
@@ -48,14 +52,16 @@ class HomePage extends StatelessWidget {
           case ConnectionState.done:
             final user = FirebaseAuth.instance.currentUser;
             if (user != null) {
+              devtool.log(user.toString());
               if (user.emailVerified) {
+                return const NotesView();
               } else {
                 return const VerifyEmailView();
               }
             } else {
               return const LoginView();
             }
-            return const NotesView();
+            return const LoginView();
           default:
             return const CircularProgressIndicator();
         }
@@ -68,6 +74,8 @@ enum MenuAction { logout }
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
+
+  static const routeName = 'notes';
 
   @override
   State<NotesView> createState() => _NotesViewState();

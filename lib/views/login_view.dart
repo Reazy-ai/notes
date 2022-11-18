@@ -2,8 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as devtool show log;
 
+import 'package:mynotes/main.dart';
+import 'package:mynotes/views/register_view.dart';
+
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
+
+  static const routeName = 'login';
 
   @override
   State<LoginView> createState() => _LoginViewState();
@@ -62,7 +67,7 @@ class _LoginViewState extends State<LoginView> {
                   password: password,
                 );
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/notes',
+                  NotesView.routeName,
                   (_) => false,
                 );
                 devtool.log(userCredential.toString());
@@ -83,7 +88,7 @@ class _LoginViewState extends State<LoginView> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/register',
+                    RegisterView.routeName,
                     (route) => false,
                   );
                 },
@@ -95,4 +100,11 @@ class _LoginViewState extends State<LoginView> {
       ),
     );
   }
+}
+
+
+Future<void> showErrorDialog(BuildContext context, String text,) {
+  return showDialog(context: context, builder: (context) {
+    return AlertDialog();
+  });
 }
