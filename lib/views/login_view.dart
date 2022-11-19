@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/main.dart';
-import 'package:mynotes/utilities/Error_dialog.dart';
+import 'package:mynotes/utilities/error_dialog.dart';
 import 'package:mynotes/views/register_view.dart';
+import 'package:mynotes/views/verify_email_view.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -57,18 +58,25 @@ class _LoginViewState extends State<LoginView> {
           ),
           TextButton(
             onPressed: () async {
-              // final email = _email.text;
-              // final password = _password.text;
+              final email = _email.text;
+              final password = _password.text;
               try {
-                // final userCredential =
-                //     await FirebaseAuth.instance.signInWithEmailAndPassword(
-                //   email: email,
-                //   password: password,
-                // );
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  NotesView.routeName,
-                  (_) => false,
+                await FirebaseAuth.instance.signInWithEmailAndPassword(
+                  email: email,
+                  password: password,
                 );
+                final user = FirebaseAuth.instance.currentUser;
+                if (user?.emailVerified ?? false) {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    NotesView.routeName,
+                    (_) => false,
+                  );
+                } else {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    VerifyEmailView.routeName,
+                    (_) => false,
+                  );
+                }
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'user-not-found') {
                   await showErrorDialog(
@@ -112,4 +120,3 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 }
-

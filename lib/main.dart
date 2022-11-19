@@ -3,10 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:mynotes/app_router.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as devtool show log;
-
 import 'package:mynotes/views/login_view.dart';
-import 'package:mynotes/views/register_view.dart';
 import 'package:mynotes/views/verify_email_view.dart';
 
 void main() {
@@ -52,7 +49,6 @@ class HomePage extends StatelessWidget {
           case ConnectionState.done:
             final user = FirebaseAuth.instance.currentUser;
             if (user != null) {
-              devtool.log(user.toString());
               if (user.emailVerified) {
                 return const NotesView();
               } else {
@@ -61,7 +57,7 @@ class HomePage extends StatelessWidget {
             } else {
               return const LoginView();
             }
-            return const LoginView();
+            // return const LoginView();
           default:
             return const CircularProgressIndicator();
         }
@@ -104,7 +100,7 @@ class _NotesViewState extends State<NotesView> {
                   if (shouldLogout) {
                     await FirebaseAuth.instance.signOut();
                     Navigator.of(context).pushNamedAndRemoveUntil(
-                      '/login',
+                      LoginView.routeName,
                       (_) => false,
                     );
                   }
@@ -136,6 +132,7 @@ Future<bool> showLogOutDialog(BuildContext context) {
           ),
           TextButton(
             onPressed: () async {
+              // await FirebaseAuth.instance.signOut();
               Navigator.of(context).pop(true);
             },
             child: const Text('Logout'),
