@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:mynotes/main.dart';
 import 'package:mynotes/views/login_view.dart';
+import 'package:mynotes/views/notes/new_notes_view.dart';
 import 'package:mynotes/views/notes/notes_view.dart';
 import 'package:mynotes/views/register_view.dart';
 import 'package:mynotes/views/verify_email_view.dart';
@@ -23,6 +24,10 @@ class AppRouter {
         case NotesView.routeName:
         return MaterialPageRoute(
           builder: (context) => const NotesView(),
+        );
+        case NewNotesView.routeName:
+        return MaterialPageRoute(
+          builder: (context) => const NewNotesView(),
         );
       default:
         null;

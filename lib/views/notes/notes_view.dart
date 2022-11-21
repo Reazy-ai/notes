@@ -4,6 +4,7 @@ import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/services/crud/notes_services.dart';
 import 'package:mynotes/utilities/log_out_dialog.dart';
 import 'package:mynotes/views/login_view.dart';
+import 'package:mynotes/views/notes/new_notes_view.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
@@ -38,6 +39,9 @@ class _NotesViewState extends State<NotesView> {
       appBar: AppBar(
         title: const Text('My Notes'),
         actions: [
+          IconButton(onPressed: () {
+            Navigator.of(context).pushNamed(NewNotesView.routeName);
+          }, icon: const Icon(Icons.add),),
           PopupMenuButton<MenuAction>(
             itemBuilder: (context) {
               return const [
@@ -53,10 +57,12 @@ class _NotesViewState extends State<NotesView> {
                   final shouldLogout = await showLogOutDialog(context);
                   if (shouldLogout) {
                     await AuthService.firebase().logOut();
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      LoginView.routeName,
-                      (_) => false,
-                    );
+                    if (mounted) {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        LoginView.routeName,
+                        (_) => false,
+                      );
+                    }
                   }
               }
             },
