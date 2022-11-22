@@ -23,14 +23,7 @@ class _NotesViewState extends State<NotesView> {
   @override
   void initState() {
     _notesService = NotesService();
-    // _notesService.open();
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    _notesService.close();
-    super.dispose();
   }
 
   @override
@@ -39,9 +32,12 @@ class _NotesViewState extends State<NotesView> {
       appBar: AppBar(
         title: const Text('My Notes'),
         actions: [
-          IconButton(onPressed: () {
-            Navigator.of(context).pushNamed(NewNotesView.routeName);
-          }, icon: const Icon(Icons.add),),
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed(NewNotesView.routeName);
+            },
+            icon: const Icon(Icons.add),
+          ),
           PopupMenuButton<MenuAction>(
             itemBuilder: (context) {
               return const [
@@ -57,12 +53,10 @@ class _NotesViewState extends State<NotesView> {
                   final shouldLogout = await showLogOutDialog(context);
                   if (shouldLogout) {
                     await AuthService.firebase().logOut();
-                    if (mounted) {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        LoginView.routeName,
-                        (_) => false,
-                      );
-                    }
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      LoginView.routeName,
+                      (_) => false,
+                    );
                   }
               }
             },
@@ -74,13 +68,26 @@ class _NotesViewState extends State<NotesView> {
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
-              return StreamBuilder<Object>(
+              return StreamBuilder(
                   stream: _notesService.allNotes,
                   builder: (context, snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
                       case ConnectionState.active:
-                        return const Text('Notes Will Appear Here');
+                        if (snapshot.hasData) {
+                          final allNotes = snapshot.data as List<DatabaseNote>;
+                          return ListView.builder(
+                            itemCount: allNotes.length,
+                            itemBuilder: (context, index) {
+                              final note = allNotes[index];
+                              return ListTile(
+                                title: Text(note.text),
+                              );
+                            },
+                          );
+                        } else {
+                          return const CircularProgressIndicator.adaptive();
+                        }
                       default:
                         return const CircularProgressIndicator.adaptive();
                     }

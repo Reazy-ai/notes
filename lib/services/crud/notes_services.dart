@@ -11,13 +11,19 @@ class NotesService {
 
   List<DatabaseNote> _notes = [];
 
-  final _notesStreamController =
-      StreamController<List<DatabaseNote>>.broadcast();
+  late final StreamController<List<DatabaseNote>> _notesStreamController;
+      
 
   Stream<List<DatabaseNote>> get allNotes => _notesStreamController.stream;
 
   static final NotesService _shared = NotesService._sharedInstance();
-  NotesService._sharedInstance();
+  NotesService._sharedInstance() {
+    _notesStreamController = StreamController<List<DatabaseNote>>.broadcast(
+      onListen: () {
+        _notesStreamController.sink.add(_notes);
+      },
+    );
+  }
   factory NotesService() => _shared;
 
   Future<void> _ensureDbIsOpen() async {
@@ -53,13 +59,13 @@ class NotesService {
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     await getNote(id: note.id);
-
-    final updateCount = await db.update(noteTable, {
+    
+    final updatesCount = await db.update(noteTable, {
       textColumn: text,
       isSyncedWithCloudColumn: 0,
     }); // Should add where clause for oldNote.id.
 
-    if (updateCount == 0) {
+    if (updatesCount == 0) {
       throw CouldNotUpdateNote();
     } else {
       final updatedNote = await getNote(id: note.id);
@@ -196,7 +202,6 @@ class NotesService {
     if (results.isNotEmpty) {
       throw UserAlreadyExist();
     }
-
     final userId = await db.insert(
       userTable,
       {
@@ -255,10 +260,8 @@ class NotesService {
       final dbPath = join(docsPath.path, dbName);
       final db = await openDatabase(dbPath);
       _db = db;
-
       //create user table.
       await db.execute(createUserTable);
-
       //create notes table
       await db.execute(createNotesTable);
       await _cacheNotes();
@@ -336,14 +339,13 @@ const createUserTable = '''CREATE TABLE IF NOT EXISTS "user" (
 	        "id"	INTEGER NOT NULL,
 	        "email"	TEXT NOT NULL UNIQUE,
 	        PRIMARY KEY("id" AUTOINCREMENT)
-        );
-      ''';
+        );''';
+      
 const createNotesTable = '''CREATE TABLE IF NOT EXISTS "note" (
 	        "id"	INTEGER NOT NULL,
 	        "user_id"	INTEGER NOT NULL,
-	        "text"	TEXT NOT NULL,
-	        "is_synced_with_cloud"	INTEGER NOT NULL,
+	        "text"	TEXT,
+	        "is_synced_with_cloud"	INTEGER NOT NULL DEFAULT 0,
 	        FOREIGN KEY("user_id") REFERENCES "user"("id"),
 	        PRIMARY KEY("id" AUTOINCREMENT)
-        );
-      ''';
+        );''';
