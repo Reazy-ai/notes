@@ -205,7 +205,7 @@ class NotesService {
     final userId = await db.insert(
       userTable,
       {
-        emailColumn: email.toUpperCase(),
+        emailColumn: email.toLowerCase(),
       },
     );
 

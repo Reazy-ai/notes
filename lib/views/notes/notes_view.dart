@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:mynotes/constants/enums/menu_action.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/services/crud/notes_services.dart';
-import 'package:mynotes/utilities/log_out_dialog.dart';
+import 'package:mynotes/utilities/dialogs/logout_dialog.dart';
 import 'package:mynotes/views/login_view.dart';
 import 'package:mynotes/views/notes/new_notes_view.dart';
+import 'package:mynotes/views/notes/notes_list_view.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
@@ -76,15 +77,9 @@ class _NotesViewState extends State<NotesView> {
                       case ConnectionState.active:
                         if (snapshot.hasData) {
                           final allNotes = snapshot.data as List<DatabaseNote>;
-                          return ListView.builder(
-                            itemCount: allNotes.length,
-                            itemBuilder: (context, index) {
-                              final note = allNotes[index];
-                              return ListTile(
-                                title: Text(note.text),
-                              );
-                            },
-                          );
+                          return NotesListView(notes: allNotes, onDeleteNote: (note) async {
+                            await _notesService.deleteNote(id: note.id);
+                          },);
                         } else {
                           return const CircularProgressIndicator.adaptive();
                         }
