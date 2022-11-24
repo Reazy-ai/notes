@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/services/auth/auth_exceptions.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/utilities/dialogs/error_dialogs.dart';
-import 'package:mynotes/views/notes/notes_view.dart';
-import 'package:mynotes/views/register_view.dart';
-import 'package:mynotes/views/verify_email_view.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
-
-  static const routeName = 'login';
 
   @override
   State<LoginView> createState() => _LoginViewState();
@@ -69,12 +65,12 @@ class _LoginViewState extends State<LoginView> {
                 final user = AuthService.firebase().currentUser;
                 if (user?.isEmailVerified ?? false) {
                   Navigator.of(context).pushNamedAndRemoveUntil(
-                    NotesView.routeName,
+                    notesRoute,
                     (_) => false,
                   );
                 } else {
                   Navigator.of(context).pushNamedAndRemoveUntil(
-                    VerifyEmailView.routeName,
+                    verifyEmailRoute,
                     (_) => false,
                   );
                 }
@@ -104,7 +100,7 @@ class _LoginViewState extends State<LoginView> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pushNamedAndRemoveUntil(
-                    RegisterView.routeName,
+                    registerRoute,
                     (route) => false,
                   );
                 },

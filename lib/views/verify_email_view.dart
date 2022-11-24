@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
-import 'package:mynotes/views/register_view.dart';
 
 class VerifyEmailView extends StatefulWidget {
   const VerifyEmailView({Key? key}) : super(key: key);
-
-  static const routeName = 'verify-email';
 
   @override
   State<VerifyEmailView> createState() => _VerifyEmailViewState();
@@ -35,7 +33,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
             TextButton(
               onPressed: () async {
                 await AuthService.firebase().logOut();
-                Navigator.of(context).pushNamed(RegisterView.routeName);
+                Navigator.of(context).pushNamed(registerRoute);
               },
               child: const Text('Restart'),
             ),

@@ -1,19 +1,20 @@
-import 'package:mynotes/app_router.dart';
+import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
+import 'package:mynotes/views/notes/create_update_note_view.dart';
 import 'package:mynotes/views/notes/notes_view.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/views/login_view.dart';
+import 'package:mynotes/views/register_view.dart';
 import 'package:mynotes/views/verify_email_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MyApp(appRouter: AppRouter(),));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key, required this.appRouter}) : super(key: key);
+  const MyApp({Key? key, }) : super(key: key);
 
-  final AppRouter appRouter;
 
   @override
   Widget build(BuildContext context) {
@@ -24,12 +25,14 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.purple,
       ),
       home: const HomePage(),
-      onGenerateRoute: appRouter.onGenerateRoute,
-      // routes: {
-      //   '/login': (context) => const LoginView(),
-      //   '/register': (context) => const RegisterView(),
-      //   '/notes':(context) => const NotesView(),
-      // },
+      // onGenerateRoute: appRouter.onGenerateRoute,
+      routes: {
+        loginRoute: (context) => const LoginView(),
+        registerRoute: (context) => const RegisterView(),
+        notesRoute:(context) => const NotesView(),
+        verifyEmailRoute:(context) => const VerifyEmailView(),
+        createOrUpdateNotesRoute:(context) => const CreateUpdateNoteView(),
+      },
     );
   }
 }
