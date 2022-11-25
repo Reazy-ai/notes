@@ -46,7 +46,7 @@ class _NotesViewState extends State<NotesView> {
                 PopupMenuItem<MenuAction>(
                   value: MenuAction.logout,
                   child: Text('Logout'),
-                )
+                ),
               ];
             },
             onSelected: (value) async {
