@@ -40,7 +40,8 @@ void main() {
         () async {
           await provider.initialize();
           expect(provider._isInitialized, true);
-        },timeout: const Timeout(Duration(seconds: 3)),
+        },
+        timeout: const Timeout(Duration(seconds: 3)),
       );
 
       test(
@@ -91,8 +92,8 @@ void main() {
       test(
         'Should be able to logout and login again',
         () {
-           provider.logOut();
-           provider.login(
+          provider.logOut();
+          provider.login(
             email: 'email',
             password: 'password',
           );
@@ -154,9 +155,8 @@ class MockAuthProvider implements AuthProvider {
     if (password == 'foobar') {
       throw WrongPasswordAuthException();
     }
-    const user = AuthUser(
-      id: 'my_id',
-      isEmailVerified: false, email: 'hello@hi.com');
+    const user =
+        AuthUser(id: 'my_id', isEmailVerified: false, email: 'hello@hi.com');
     _user = user;
     return Future.value(user);
   }
@@ -168,9 +168,15 @@ class MockAuthProvider implements AuthProvider {
     if (user == null) {
       throw UserNotFoundAuthException();
     }
-    const newUser = AuthUser(
-      id: 'my_id',
-      isEmailVerified: true, email: 'hello@hi.com');
+    const newUser =
+        AuthUser(id: 'my_id', isEmailVerified: true, email: 'hello@hi.com');
     _user = newUser;
+  }
+
+  @override
+  Future<void> sendPasswordReset({required String toEmail}) async {
+    if (!_isInitialized) throw NotInitializedException();
+    if (toEmail.isEmpty) throw InvalidEmailAuthException();
+    await Future.delayed(const Duration(seconds: 2));
   }
 }
